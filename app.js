@@ -51,18 +51,17 @@ const userData = new mongoose.Schema({
 const User = mongoose.model("User", userData);
 
 
-const userId = Math.random().toString(16).slice(2);
-console.log(userId);
+let userId;
 
 app.get("/", (req, res) => {
-  res.render("home",{
-    userId: userId
-  });
+  res.render("home");
 });
 
 app.post("/", (req, res) => {
-  const userAgent = req.headers["user-agent"]; // Získání User-Agent z hlaviček požadavku
-  console.log("User-Agent:", userAgent); // Výpis User-Agent do konzole
+  userId = req.body.userId;
+  console.log(userId);
+  const userAgent = req.headers["user-agent"];
+  // console.log("User-Agent:", userAgent); // Výpis User-Agent do konzole
   // const screenWidth = window.screen.width;
   // const screenHeight = window.screen.height;
   // console.log("Šířka obrazovky:", screenWidth, "px");
@@ -109,9 +108,9 @@ app.post("/data", (req, res) => {
 });
 
 // app.get(`/scene2/:id`, (req, res) => {})
-// app.get(`/final`, (req, res) => {
-//   res.render("final")
-// })
+app.get(`/final`, (req, res) => {
+  res.render("final")
+})
 
 
 

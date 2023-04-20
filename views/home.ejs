@@ -1,12 +1,19 @@
 <%- include("header"); -%>
+
 </head>
 <body>
   <form class="home-form mb-3" action="/" method="post">
     <h1>Vítejte v testovací aplikaci</h1>
     <p>Cílem aplikace je otestovat 3D vizualizace ve výuce geografie</p>
-    <p>Vaše uživatelské ID je: <%= userId %></p>
-    <button class="btn btn-success" type="submit">Continue</button>
+    <p class="userId"></p>
+    <button class="btn btn-success" type="submit" name="userId">Continue</button>
   </form>
+  <script>
+  /// Creat user unique ID /// 
+    let userId = Math.random().toString(16).slice(2);
+    document.querySelector(".userId").innerHTML = `Vaše uživatelské ID je: ${userId}`;
+    document.querySelector(".btn").value = userId;
+  </script>
 </body>
 
 </html>
