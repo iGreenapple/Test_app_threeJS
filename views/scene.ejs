@@ -8,10 +8,29 @@
     <progress id="progress-bar" value="0" max="100"></progress>
   </div>
   <button id="line-button">Visualize the camera path</button>
+  <!-- <button id="post-button">POST</button> -->
   <form class="scene-form" action="/scene1" method="post">
-    <h1>1. úkol</h1>
-    <p>Označ dvojklikem kouli</p>
-    <button class="post btn btn-success" type="submit" name="userID">Submit</button>
+    <div class="movement-type" id="rotate">
+      <p>Rotace</p>
+      <img class="movement-img" src="/mouse_left-removebg-preview.png" alt="mouse_left">
+    </div>
+    
+    <div class="movement-type" id="zoom">
+      <p>Zoom</p>
+      <img class="movement-img" src="/mouse_scroll-removebg-preview.png" alt="mouse_scroll">
+    </div>
+    
+    <div class="movement-type" id="pan">
+      <p>Pan</p>
+      <img class="movement-img" src="/mouse_right-removebg-preview.png" alt="mouse_right">
+    </div>
+
+    <div class="movement-type" id="select">
+      <p>Select object</p>
+      <img class="movement-img" src="/mouse_leftclick-removebg-preview.png" alt="mouse_leftclick">
+    </div>
+
+    <button class="btn btn-secondary" type="submit" name="userID" id="post-button" disabled>Pokračovat</button>
   </form> 
   <script type="module" src="/scene1.js"></script>
 </body>

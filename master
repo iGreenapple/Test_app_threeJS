@@ -1,0 +1,11 @@
+[33mcommit c7e0505bb5d17be467e4648d5ed8170865dbb659[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: Ondrej Stanek <stanekondras44@gmail.com>
+Date:   Thu Apr 20 13:58:55 2023 +0200
+
+    fix user ID generation
+
+[33mcommit 44b2704e7811be8ba505398f9dfc0a0d676cc49e[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Ondrej Stanek <stanekondras44@gmail.com>
+Date:   Thu Apr 20 12:52:11 2023 +0200
+
+    first commit

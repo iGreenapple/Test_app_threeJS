@@ -2,19 +2,16 @@
 <%- include("importmap"); -%>
 
 </head>
-
 <body>
-  <div class="progress-bar-container progress">
+  <div class="progress-bar-container">
     <label for="progress-bar">Loading...</label>
     <progress id="progress-bar" value="0" max="100"></progress>
   </div>
-  <form class="scene-form" action="/" method="post">
-    <h1>User id: <%= userId %>
-    </h1>
-    <input type="text" name="message">
-    <button class="post" type="submit" name="userID">Submit</button>
+  <form class="scene-form" action="/scene2" method="post">
+    <h1>2. úkol</h1>
+    <p>Označ zemský plášť</p>
+    <button class="btn btn-secondary" type="submit" name="userID" id="post-button" disabled>Submit</button>
   </form>
-  <script type="module" src="js/scene_1.js"></script>
+  <script type="module" src="/scene2.js"></script>
 </body>
-
 </html>

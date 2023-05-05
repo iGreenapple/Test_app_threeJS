@@ -5,15 +5,35 @@ body {
 }
 
 .scene-form {
-  background-color:white;
+  background-color:rgba(255, 255, 255, 0.44);
   position: fixed;
   border-style: solid;
+  border-radius: 10px;
   margin: 10px;
-  padding: 50px;
+  padding: 25px 40px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.movement-type {
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 15px;
+  max-width: auto;
+  border: rgb(0, 0, 0) solid;
+  border-width: 2px;
+  border-radius: 7.5px;
+}
+.movement-type * {
+  display: inline;
+}
+
+.movement-img {
+  width: 42px;
+  height: 60px;
 }
 
 .home-form {
@@ -38,13 +58,51 @@ body {
   align-items: center;
 }
 
+.form-container {
+  padding: 10px;
+  margin: 25px;
+  background-color: rgb(210, 207, 207);
+  border: solid 1px black;
+  border-radius: 5px 0px;
+  box-shadow: 0.5rem 0.5rem black, -0.5rem -0.5rem #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+}
+
+h6 {
+  display: block;
+}
+
+.form-item {
+  padding: 5px;
+  margin-bottom: 10px;
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  /* justify-content: left;
+  align-items: left; */
+}
+
+.likert-div {
+  margin: 0 10px;
+  display: inline-block;
+  /* text-align: center; */
+}
+
+.likert-div label {
+  display: block;
+  /* text-align: center; */
+}
+input[type="radio"] {
+  position: relative;
+  transform: translate(-50%, 0%);
+  left: 50%;
+}
+
 #progress-bar {
   width: 30%;
   margin-top: 0.5%;
   height: 2%;
   accent-color: coral;
-}
-
-label {
-  font-size: 2rem;
 }

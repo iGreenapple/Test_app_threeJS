@@ -4,31 +4,20 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 let camera, controls, scene, renderer;
 
 const sceneMeshes = []; // array ukládající 3DObject pro raycaster
 let objectsToOutline = []; // array ukládající 3DObject pro Outline Pass
 
-/// initialization of some data ///
-
-// let startTime = new Date().getTime();
-// console.log(startTime);
-// let endTime
-// setTimeout(() => {
-//   endTime = new Date().getTime();
-//   console.log(endTime - startTime);
-// }, 5000);
-
-// const screenWidth = window.screen.width;
-// const screenHeight = window.screen.height;
-// console.log("Šířka obrazovky:", screenWidth, "px");
-// console.log("Výška obrazovky:", screenHeight, "px");
-
-// const mediaQuery = window.matchMedia("(orientation: landscape)"); // nebo "(orientation: portrait)" pro výšku
-// const isLandscape = mediaQuery.matches;
-// console.log("Orientace obrazovky:", isLandscape ? "landscape" : "portrait");
-
+// proměnné kontrolující splnění úkolů
+let check = {
+  rotateDone: false,
+  zoomDone: false,
+  panDone: false,
+  selectDone: false
+}
 
 /// SCENE ///
 scene = new THREE.Scene();
@@ -38,8 +27,13 @@ scene.background = new THREE.Color(0xcccccc);
 renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setAnimationLoop(animation); // A built in function that can be used instead of requestAnimationFrame.
+
 renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.8;
+renderer.setPixelRatio( window.devicePixelRatio );
 renderer.shadowMap.enabled = true;
+
 document.body.appendChild(renderer.domElement);
 
 /// CAMERA ///
@@ -51,22 +45,37 @@ controls = new OrbitControls(camera, renderer.domElement);
 controls.addEventListener("change", render)
 
 /// LIGHTS ///
-const light = new THREE.SpotLight()
+const light = new THREE.SpotLight(0xffffff, 1)
 light.position.set(10, 20, 10)
 light.castShadow = true;
 light.shadow.mapSize.width = 4096;
 light.shadow.mapSize.height = 4096;
 scene.add(light)
 
+/// HDR background ///
+const hdrTextureURL = new URL("images/mud_road_puresky_1k.hdr", import.meta.url)
+
+const RGBE = new RGBELoader();
+RGBE.load(hdrTextureURL, (texture) => {
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  // scene.background = texture;
+  scene.enviroment = texture; 
+}) 
+
 // CUBE
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+const geometry = new THREE.SphereGeometry(1, 50, 50);
+const material = new THREE.MeshStandardMaterial({ 
+  color: 0xffef00,
+  roughness: 0,
+  metalness: 0,
+  envMap: RGBE
+ });
 const cube = new THREE.Mesh(geometry, material);
 sceneMeshes.push(cube)
 scene.add(cube);
+cube.position.y = 3;
 
 /// OUTLINEPASS ///
-
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
 const outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
@@ -96,7 +105,6 @@ loader.load(
     // addOutlineObject(model)
     gltf.scene.traverse((child) => {
       
-      
       if (child.name === "Plane") {
         child.receiveShadow = true;
         child.position.y = -0.5;
@@ -118,7 +126,6 @@ loader.load(
 )
 
 /// RAYCASTER ///
-
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -130,7 +137,6 @@ function onMouseMove(event) {
     (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
     -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
   )
-
   raycaster.setFromCamera(mouse, camera)
 
   const intersects = raycaster.intersectObjects(sceneMeshes, true)
@@ -140,63 +146,14 @@ function onMouseMove(event) {
     const selectedObject = intersects[0].object;
     addOutlineObject(selectedObject);
     outlinePass.selectedObjects = objectsToOutline;
-    console.log(objectsToOutline[0].name);
+    checkMovement() // volání funkce pro kontrolu 
   }
 }
-
-/// track visualisation /// 
-let lineVertex = [
-  { x: 5, y: 10, z: 10 },
-  { x: 10.145626164945142, y: 9.400139826323175, z: 5.805483697914693 },
-  { x: 8.826167144218266, y: 7.991878746582728, z: -9.122973618411978 },
-  { x: 5.919266028318319, y: 7.588538066794117, z: -11.505493457249594 },
-  { x: 3.2050181549728953, y: 7.039132165404173, z: -12.852177908209425 },
-  { x: 0.6067518140023622, y: 6.618892888804147, z: -13.447011160951064 },
-  { x: -2.5100902821093496, y: 6.335066372226949, z: -13.362873225288762 },
-  { x: -4.03184308080803, y: 6.335066372226951, z: -12.985036597222958 },
-  { x: -5.395191637478228, y: 6.192099737783953, z: -12.551884640651412},
-  { x: -6.3014636635577235, y: 6.192099737783953, z: -12.122271096382786 },
-];
-let track = [];
-
-function createLineFromCoordinates(coordinates) {
-  track = []
-  const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(coordinates.length * 3);
-
-  for (let i = 0; i < coordinates.length; i++) {
-    positions[i * 3] = coordinates[i].x;
-    positions[i * 3 + 1] = coordinates[i].y;
-    positions[i * 3 + 2] = coordinates[i].z;
-  }
-
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-  const material = new THREE.LineBasicMaterial({ color: 0x000000 });
-  const line = new THREE.Line(geometry, material);
-
-  scene.add(line)
-}
-
-
-// controls.addEventListener("change", (render => {
-//   let {x,y,z} = camera.position;
-//   track.push({ x, y, z })
-// }))
-
-document.querySelector("#line-button").onclick = function () {
-  createLineFromCoordinates(track)
-}
-
 
 /// Animate function ///
-
 function animation() {
   composer.render();
   controls.update();
-  // console.log({x: camera.position.x,
-  //   y: camera.position.y,
-  //   z: camera.position.z});
 }
 
 function render() {
@@ -213,45 +170,84 @@ function onWindowResize() {
 }
 window.addEventListener('resize', onWindowResize, false);
 
+function writeTime() {
+  let d = new Date();
+  return `${d.toLocaleDateString()}, ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}:${d.getMilliseconds()}`
+}
+
+// function to create object of single coordinate record
+function addCameraCoordinates(position) {
+  let singleCoordinateRecord = {
+    time: writeTime(),
+    movement: controls.movement, 
+    x: position.x,
+    y: position.y,
+    z: position.z
+  }
+  return singleCoordinateRecord;
+}
+
+/// track visualisation ///
+let track = [];
+
+function createLineFromCoordinates(coordinates) {
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(coordinates.length * 3);
+  for (let i = 0; i < coordinates.length; i++) {
+    positions[i * 3] = coordinates[i].x;
+    positions[i * 3 + 1] = coordinates[i].y;
+    positions[i * 3 + 2] = coordinates[i].z;
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+  const material = new THREE.LineBasicMaterial({ color: 0x000000 });
+  const line = new THREE.Line(geometry, material);
+
+  scene.add(line)
+}
+
+// onClick funkce na vytvoření 
+document.querySelector("#line-button").onclick = function () {
+  let trackToVizulize = track;
+  createLineFromCoordinates(trackToVizulize)
+}
+
+// upravená eventListener ovládání, kdy je zachycená změna každých 25 milisekund 
+let lastUpdateTime = 0;
+controls.addEventListener('change', function () {
+  var now = Date.now();
+  if (now - lastUpdateTime > 25) {
+    let { x, y, z } = camera.position;
+    track.push(addCameraCoordinates({ x, y, z }))
+    lastUpdateTime = now;
+  }
+  checkMovement()
+});
 
 /// DATA COMPILATION ///
+let entryTime = new Date().toLocaleTimeString();
 
 function createData() {
   let data = {
     scene: "scene_1",
-    entryTime: Date(),
-    exitTime: Date(),
-    testTime: data.entryTime, 
+    entryTime: entryTime,
+    exitTime: new Date().toLocaleTimeString(),
     selectedObject: objectsToOutline[0].name,
-    cameraPosition: cameraTracker
+    cameraMovement: track
   }
-  return data
+  return data;
 }
-
-const cameraTracker = [];
-
-//   let cameraPosition = {
-//   x: camera.position.x,
-//   y: camera.position.y,
-//   z:camera.position.z
-//   };
-//   cameraTracker.push(cameraPosition);
-//   // console.log(cameraTracker);
-
-
-
-
-
-
-
-document.querySelector(".post").onclick = function sendData() {
-  createData()
-  fetch("/data", {
+// OnClick funkce, provádějící fetch zasílající data na server  
+document.querySelector("#post-button").onclick = function () {
+  let dataToPost = createData();
+  console.log(dataToPost);
+  fetch("/scene_data", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json'
       }),
-      body: JSON.stringify(data)
+      body: JSON.stringify(dataToPost)
     })
     .then(response => response.json())
     .then(data =>
@@ -260,5 +256,40 @@ document.querySelector(".post").onclick = function sendData() {
     .catch(error => 
         console.log(error)
     );
+};
+
+/// Controlling user actions /// 
+
+// Funkce pro aktualizaci stavu tlačítka Odeslat
+function updateSubmitButton() {
+  if (Object.values(check).every(Boolean)) {
+    document.getElementById("post-button").classList.remove('btn-secondary');
+    document.getElementById("post-button").classList.add('btn-success');
+    document.getElementById('post-button').disabled = false;
+  } else {
+    document.getElementById('post-button').disabled = true;
+  }
+}
+
+// Funkce pro zvýraznění divu a aktualizaci proměnné
+function highlightDiv(divId, variable, value) {
+  document.getElementById(divId).style.backgroundColor = value;
+  check[variable] = true;
+  updateSubmitButton();
+}
+
+function checkMovement() {
+  if (objectsToOutline.length > 0) {
+    highlightDiv('select', 'selectDone', 'lightgreen')
+  }
+  if (controls.movement === "Rotate") {
+    highlightDiv('rotate', 'rotateDone', 'lightgreen');
+  }
+  else if (controls.movement === "Pan") {
+    highlightDiv('pan', 'panDone', 'lightgreen');
+  }
+  else if (controls.movement === "Zoom in" || controls.movement === "Zoom out") {
+    highlightDiv('zoom', 'zoomDone', 'lightgreen');
+  } 
 }
 

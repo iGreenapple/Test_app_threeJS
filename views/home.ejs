@@ -6,13 +6,38 @@
     <h1>Vítejte v testovací aplikaci</h1>
     <p>Cílem aplikace je otestovat 3D vizualizace ve výuce geografie</p>
     <p class="userId"></p>
-    <button class="btn btn-success" type="submit" name="userId">Continue</button>
+    <button class="btn btn-success" type="submit" name="userId" id="post-button">Continue</button>
   </form>
   <script>
-  /// Creat user unique ID /// 
+    /// Creat user unique ID ///
     let userId = Math.random().toString(16).slice(2);
     document.querySelector(".userId").innerHTML = `Vaše uživatelské ID je: ${userId}`;
     document.querySelector(".btn").value = userId;
+
+    // Posílání základních dat o prohlížeči a obrazovce
+    document.querySelector("#post-button").onclick = function () {
+      let data = {
+        userId: userId,
+        browserType: navigator.userAgent,
+        screenWidth: window.innerWidth,
+        screenHeight: window.innerHeight,
+      }
+      // console.log(data);
+      fetch("/start_data", {
+        method: 'POST',
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        }),
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(data =>
+          console.log(data)
+        )
+        .catch(error =>
+          console.log(error)
+        );
+    }
   </script>
 </body>
 

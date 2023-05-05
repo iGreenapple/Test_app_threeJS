@@ -1,0 +1,80 @@
+<%- include("header"); -%>
+
+</head>
+
+<body>
+  <form class="form-container" method="post" action="/final_data">
+    <h6>Pohlaví:</h6>
+    <div class="form-item">
+      <div class="likert-div">
+        <label for="gender-male">Muž</label>
+        <input type="radio" id="gender-male" name="gender" value="male">
+      </div>
+      <div class="likert-div">
+        <label for="gender-female">Žena</label>
+        <input type="radio" id="gender-female" name="gender" value="female">
+      </div>
+      <div class="likert-div">
+        <label for="gender-female">Nechci uvést</label>
+        <input type="radio" id="gender-female" name="gender" value="female">
+      </div>
+    </div>
+
+    <h6>Věk:</h6>
+    <div class="form-item">
+      <input id="age" type="text" name="age">  
+    </div>
+
+    <h6>Mám zkušenosti s počítačovými hrami?</h6>
+    <div class="form-item">
+      <div class="likert-div">
+        <label for="experience-1">souhlasím</label>
+        <input type="radio" id="experience-1" name="experience" value="1">
+      </div>
+      <div class="likert-div">
+        <label for="experience-2">spíše souhlasím</label>
+        <input type="radio" id="experience-2" name="experience" value="2">
+      </div>
+      <div class="likert-div">
+        <label for="experience-3">neutrální</label>
+        <input type="radio" id="experience-3" name="experience" value="3">
+      </div>
+      <div class="likert-div">
+        <label for="experience-4">spíše nesouhlasím</label>
+        <input type="radio" id="experience-4" name="experience" value="4">
+      </div>
+      <div class="likert-div">
+        <label for="experience-5">nesouhlasím</label>
+        <input type="radio" id="experience-5" name="experience" value="5">
+      </div>
+    </div>
+    <h6>3D vizualizace mi přijdou přínosné ve výuce geografie?</h6>
+    <div class="form-item">
+      <div class="likert-div">
+        <label for="visualization-1">souhlasím</label>
+        <input type="radio" id="visualization-1" name="visualization" value="1">
+      </div>
+      <div class="likert-div">
+        <label for="visualization-2">spíše souhlasím</label>
+        <input type="radio" id="visualization-2" name="visualization" value="2">
+      </div>
+      <div class="likert-div">
+        <label for="visualization-3">neutrální</label>
+        <input type="radio" id="visualization-3" name="visualization" value="3">
+      </div>
+      <div class="likert-div">
+        <label for="visualization-4">spíše nesouhlasím</label>
+        <input type="radio" id="visualization-4" name="visualization" value="4">
+      </div>
+      <div class="likert-div">
+        <label for="visualization-5">nesouhlasím</label>
+        <input type="radio" id="visualization-5" name="visualization" value="5">
+      </div>
+    </div>
+    
+    <button id="post-button" class="btn btn-success" type="submit">Odeslat</button>
+  </form>
+<!-- <script type="module" src="/form.js"></script> -->
+</body>
+
+</html>
