@@ -61,11 +61,12 @@ const userData = new mongoose.Schema({
   userId: String,
   entryTime : String,
   exitTime : String,
-  scene1 : sceneData,
-  scene2 : sceneData,
   browser : String,
+  platform : String,
   screenWidth: String,
   screenHeight: String,
+  scene1 : sceneData,
+  scene2 : sceneData,
   formData: formData
 })
 
@@ -78,11 +79,12 @@ let dataFromUser = new User({
   userId: null,
   entryTime: new Date().toLocaleTimeString(),
   exitTime: null,
-  scene1: null,
-  scene2: null,
   browser: null,
+  platform: null,
   screenWidth: null,
   screenHeight: null,
+  scene1: null,
+  scene2: null,
   formData: null
 });
 
@@ -163,6 +165,7 @@ app.use("/start_data", (req, res) => {
   // save data about browser and screen in dataFromUser object/ Mongoose collection
   dataFromUser.userId = req.body.userId;
   dataFromUser.browser = req.body.browserType;
+  dataFromUser.platform = req.body.platform;
   dataFromUser.screenWidth = req.body.screenWidth;
   dataFromUser.screenHeight = req.body.screenHeight;
 

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
@@ -45,7 +45,7 @@ controls = new OrbitControls(camera, renderer.domElement);
 controls.addEventListener("change", render)
 
 /// LIGHTS ///
-const light = new THREE.SpotLight(0xffffff, 1)
+const light = new THREE.SpotLight(0xffffff, 0.5)
 light.position.set(10, 20, 10)
 light.castShadow = true;
 light.shadow.mapSize.width = 4096;
@@ -274,6 +274,7 @@ function updateSubmitButton() {
 // Funkce pro zvýraznění divu a aktualizaci proměnné
 function highlightDiv(divId, variable, value) {
   document.getElementById(divId).style.backgroundColor = value;
+  document.getElementById(divId).classList.add("complete")
   check[variable] = true;
   updateSubmitButton();
 }
@@ -292,4 +293,3 @@ function checkMovement() {
     highlightDiv('zoom', 'zoomDone', 'lightgreen');
   } 
 }
-

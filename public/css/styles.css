@@ -27,11 +27,19 @@ body {
   border-width: 2px;
   border-radius: 7.5px;
 }
+
+.complete {
+  animation-name: color-change;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
 .movement-type * {
   display: inline;
 }
 
 .movement-img {
+  
   width: 42px;
   height: 60px;
 }
@@ -105,4 +113,13 @@ input[type="radio"] {
   margin-top: 0.5%;
   height: 2%;
   accent-color: coral;
+}
+
+@keyframes color-change {
+  from {
+    background-color: white;
+  }
+  to {
+    background-color: rgb(43, 214, 43);
+  }
 }

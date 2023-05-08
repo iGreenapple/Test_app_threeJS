@@ -14,11 +14,17 @@
     document.querySelector(".userId").innerHTML = `Vaše uživatelské ID je: ${userId}`;
     document.querySelector(".btn").value = userId;
 
+    const uaData = navigator.userAgentData;
+
+    let browserData = `${uaData.brands[0].brand} ${uaData.brands[0].version}`
+    let platform = `${uaData.platform}`
+
     // Posílání základních dat o prohlížeči a obrazovce
     document.querySelector("#post-button").onclick = function () {
       let data = {
         userId: userId,
-        browserType: navigator.userAgent,
+        browserType: browserData,
+        platform: platform,
         screenWidth: window.innerWidth,
         screenHeight: window.innerHeight,
       }
